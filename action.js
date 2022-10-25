@@ -154,7 +154,7 @@ function fgenerate() {
 }
 
 function fplot() {
-    if (mn === mx) {
+    if (mn === mx || mn === Number.MAX_SAFE_INTEGER) {
         explain.innerText = "No valid input to represent";
         testButton.style.top = 200;
     } else {
