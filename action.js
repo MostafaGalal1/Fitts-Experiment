@@ -67,6 +67,17 @@ function finitialize() {
     testButton.style.display = "block";
 }
 
+function fset() {
+    if (enable) {
+        enable = false;
+        initialPositionX = parseInt(event.clientX);
+        initialPositionY = parseInt(event.clientY);
+        ti = Date.now();
+        explain.innerText = "Click on the orange strip";
+        testButton.style.background = "orange";
+    }
+}
+
 function foperation1() {
     if (currTestButton1 && !enable) {
         fevaluate(testButton1);
@@ -85,15 +96,13 @@ function foperation2() {
     }
 }
 
-function fset() {
-    if (enable) {
-        enable = false;
-        initialPositionX = parseInt(event.clientX);
-        initialPositionY = parseInt(event.clientY);
-        ti = Date.now();
-        explain.innerText = "Click on the orange strip";
-        testButton.style.background = "orange";
-    }
+function fgenerate() {
+    width = Math.floor(Math.random() * 161) + 40;
+    pad = Math.floor(Math.random() * (container.offsetWidth / 2 - 250)) + 25;
+    testButton1.style.width = width;
+    testButton2.style.width = width;
+    testButton1.style.left = container.offsetWidth - pad - width;
+    testButton2.style.left = pad;
 }
 
 function fevaluate(currTestButton) {
@@ -150,15 +159,6 @@ function fevaluate(currTestButton) {
             fgenerate();
         }
     }
-}
-
-function fgenerate() {
-    width = Math.floor(Math.random() * 161) + 40;
-    pad = Math.floor(Math.random() * (container.offsetWidth / 2 - 250)) + 25;
-    testButton1.style.width = width;
-    testButton2.style.width = width;
-    testButton1.style.left = container.offsetWidth - pad - width;
-    testButton2.style.left = pad;
 }
 
 function fplot() {
@@ -225,5 +225,4 @@ function fplot() {
         plotter.style.display = "block";
         Plotly.newPlot('plotter', data, layout);
     }
-
 }
