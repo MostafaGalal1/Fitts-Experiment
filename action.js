@@ -11,7 +11,6 @@ var currTestButton1 = false,
     currTestButton2 = false;
 var width = 0,
     pad = 0;
-
 var limit = 15;
 var enable = false;
 var initialPositionX, initialPositionY;
