@@ -70,7 +70,7 @@ function fset() {
     if (enable) {
         enable = false;
         ti = Date.now();
-        explain.innerText = "Click on the orange strip";
+        explain.innerText = "Click on the orange stripe";
         testButton.style.background = "orange";
     }
 }
@@ -98,14 +98,17 @@ function fgenerate() {
     pad = Math.floor(Math.random() * (container.offsetWidth / 2 - 250)) + 25;
     testButton1.style.width = width;
     testButton2.style.width = width;
-    testButton1.style.left = container.offsetWidth - pad - width;
+    testButton1.style.right = pad;
     testButton2.style.left = pad;
 }
 
 function fevaluate(currTestButton) {
     if (!enable) {
-        finalPosition = parseInt(currTestButton.style.left) + (parseInt(currTestButton.style.width) / 2.0);
-
+        if (currTestButton1)
+            finalPosition = parseInt(testButton1.style.right) + (parseInt(currTestButton.style.width) / 2.0);
+        else if (currTestButton2)
+            finalPosition = parseInt(testButton2.style.left) + (parseInt(currTestButton.style.width) / 2.0);
+        
         distance = Math.abs(initialPosition - finalPosition);
 
         si = Date.now();
@@ -118,6 +121,7 @@ function fevaluate(currTestButton) {
 
         mn = Math.min(mn, ID);
         mx = Math.max(mx, ID);
+        
         x += ID;
         y += MT;
 
@@ -148,6 +152,7 @@ function fevaluate(currTestButton) {
 
             if (n === limit) {
                 enable = false;
+                n *= 2;
                 fplot();
             } else {
                 trials.innerText = "Trial " + (n + 1) + " of " + limit;
