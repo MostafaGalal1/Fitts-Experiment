@@ -13,8 +13,8 @@ var width = 0,
     pad = 0;
 var limit = 15;
 var enable = false;
-var initialPositionX, initialPositionY;
-var finalPositionX, finalPositionY;
+var initialPosition = container.offsetWidth / 2.0;
+var finalPosition;
 var ti = NaN,
     si = NaN,
     distance, ID, MT;
@@ -69,8 +69,6 @@ function finitialize() {
 function fset() {
     if (enable) {
         enable = false;
-        initialPositionX = parseInt(event.clientX);
-        initialPositionY = parseInt(event.clientY);
         ti = Date.now();
         explain.innerText = "Click on the orange strip";
         testButton.style.background = "orange";
@@ -106,13 +104,13 @@ function fgenerate() {
 
 function fevaluate(currTestButton) {
     if (!enable) {
-        finalPositionX = parseInt(currTestButton.style.left) + (parseInt(currTestButton.style.width) / 2.0);
-        finalPositionY = 400;
+        finalPosition = parseInt(currTestButton.style.left) + (parseInt(currTestButton.style.width) / 2.0);
 
-        distance = Math.sqrt((initialPositionX - finalPositionX) * (initialPositionX - finalPositionX) + (initialPositionY - finalPositionY) * (initialPositionY - finalPositionY));
-        ID = Math.log2(2 * distance / width);
+        distance = Math.abs(initialPosition - finalPosition);
 
         si = Date.now();
+        
+        ID = Math.log2(2 * distance / width);
         MT = si - ti;
 
         IDList.push(ID);
@@ -191,7 +189,7 @@ function fplot() {
             title: {
                 text: 'MT = a + b⋅ID \n a = ' + a.toPrecision(5) + ' millisecs,  b = ' + b.toPrecision(5) + ' millisecs/bit',
                 font: {
-                    family: 'Courier New, monospace',
+                    family: 'Arial, Helvetica, sans-serif',
                     size: 24
                 },
                 xref: 'paper',
@@ -201,7 +199,7 @@ function fplot() {
                 title: {
                     text: 'Index of Difficulty (ID) in bits',
                     font: {
-                        family: 'Courier New, monospace',
+                        family: 'Arial, Helvetica, sans-serif',
                         size: 18,
                         color: '#7f7f7f'
                     }
@@ -211,7 +209,7 @@ function fplot() {
                 title: {
                     text: 'Movement Time (MT) in millisecs',
                     font: {
-                        family: 'Courier New, monospace',
+                        family: 'Arial, Helvetica, sans-serif',
                         size: 18,
                         color: '#7f7f7f'
                     }
