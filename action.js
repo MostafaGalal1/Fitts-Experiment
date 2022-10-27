@@ -1,13 +1,19 @@
-var testButton = document.getElementById("B");
-var body = document.getElementsByTagName("body")[0];
+var startButton = document.getElementById("S");
+var testButton = document.getElementById("C");
+var testButton1 = document.getElementById("T1");
+var testButton2 = document.getElementById("T2");
 var trials = document.getElementById("trials");
 var explain = document.getElementById("explain");
 var plotter = document.getElementById("plotter");
+var container = document.getElementById("container");
 
-var limit = 50;
-var enable = false,
-    set = false,
-    startTime = false;
+var currTestButton1 = false,
+    currTestButton2 = false;
+var width = 0,
+    pad = 0;
+
+var limit = 15;
+var enable = false;
 var initialPositionX, initialPositionY;
 var finalPositionX, finalPositionY;
 var ti = NaN,
@@ -28,9 +34,8 @@ var points = NaN,
     line = NaN,
     data = NaN;
 
-function initialize() {
-    set = false;
-    startTime = false;
+function finitialize() {
+    currTestButton1 = true;
     ti = NaN;
     si = NaN;
     IDList = [];
@@ -50,115 +55,124 @@ function initialize() {
 
     plotter.style.display = "none";
     enable = true;
+
+    testButton.style.display = "block";
+    testButton1.style.display = "block";
+    testButton2.style.display = "block";
+
     fgenerate();
     trials.innerText = "Trial 1 of " + limit;
-    explain.innerText = "Click mouse to set position";
-    testButton.innerText = "Click";
+    explain.innerText = "Click on the circle";
+    startButton.style.display = "none";
+    testButton.style.display = "block";
 }
 
-function foperation() {
-    if (testButton.innerText === "Start" || testButton.innerText === "Restart") {
-        initialize();
-    } else if (testButton.innerText === "Click") {
-        fevaluate();
-    } else {
-        testButton.innerText = "Restart";
-        testButton.style.left = 700;
-        testButton.style.height = 50;
-        testButton.style.width = 120;
-        fplot();
+function foperation1() {
+    if (currTestButton1 && !enable) {
+        fevaluate(testButton1);
+        currTestButton1 ^= true;
+        currTestButton2 ^= true;
+        testButton.style.background = "teal";
+    }
+}
+
+function foperation2() {
+    if (currTestButton2 && !enable) {
+        fevaluate(testButton2);
+        currTestButton1 ^= true;
+        currTestButton2 ^= true;
+        testButton.style.background = "teal";
     }
 }
 
 function fset() {
-    if (enable && set) {
+    if (enable) {
         enable = false;
-        set = false;
         initialPositionX = parseInt(event.clientX);
         initialPositionY = parseInt(event.clientY);
         ti = Date.now();
-        startTime = true;
-        console.log(event.clientX, event.clientY);
-        explain.innerText = "Move to click button when ready";
+        explain.innerText = "Click on the orange strip";
+        testButton.style.background = "orange";
     }
-    if (enable)
-        set = true;
 }
 
-body.addEventListener('mousemove', (e) => {
-    if (startTime && e != onclick) {
-        ti = Date.now();
-        console.log(ti);
-        startTime = false;
-    }
-});
-
-function fevaluate() {
+function fevaluate(currTestButton) {
     if (!enable) {
-        finalPositionX = parseInt(testButton.style.left) + (parseInt(testButton.style.width) / 2.0);
-        finalPositionY = parseInt(testButton.style.top) + (parseInt(testButton.style.height) / 2.0);
+        finalPositionX = parseInt(currTestButton.style.left) + (parseInt(currTestButton.style.width) / 2.0);
+        finalPositionY = 400;
 
         distance = Math.sqrt((initialPositionX - finalPositionX) * (initialPositionX - finalPositionX) + (initialPositionY - finalPositionY) * (initialPositionY - finalPositionY));
-        ID = Math.log2(2 * distance / parseInt(testButton.style.width));
+        ID = Math.log2(2 * distance / width);
 
         si = Date.now();
+        MT = si - ti;
 
-        console.log(initialPositionX, finalPositionX, initialPositionY, finalPositionY)
-        console.log(distance, ti);
+        IDList.push(ID);
+        MTList.push(MT);
 
-        if (Math.abs(initialPositionX - finalPositionX) <= parseInt(testButton.style.width) / 2.0 && Math.abs(initialPositionY - finalPositionY) <= parseInt(testButton.style.top) / 2.0) {
-            startTime = false;
-        } else {
-            MT = si - ti;
+        mn = Math.min(mn, ID);
+        mx = Math.max(mx, ID);
+        x += ID;
+        y += MT;
 
-            IDList.push(ID);
-            MTList.push(MT);
+        xy += ID * MT;
+        xsrq += ID * ID;
 
-            mn = Math.min(mn, ID);
-            mx = Math.max(mx, ID);
-            x += ID;
-            y += MT;
-            xy += ID * MT;
-            xsrq += ID * ID;
+        points = {
+            x: IDList,
+            y: MTList,
+            mode: 'markers',
+            name: 'Trials',
+            type: 'scatter'
+        };
 
-            points = {
-                x: IDList,
-                y: MTList,
-                mode: 'markers',
-                name: 'Trials',
-                type: 'scatter'
-            };
-        }
-
-        n += 1;
+        explain.innerText = "Click on the circle";
         enable = true;
 
-        if (n === limit) {
-            trials.innerText = "";
-            testButton.innerText = "Plot";
-            enable = false;
-        } else {
-            trials.innerText = "Trial " + (n + 1) + " of " + limit;
-            explain.innerText = "Click mouse to set position";
+        if (currTestButton1) {
+            testButton1.style.background = "teal";
+            testButton2.style.background = "orange";
+        } else if (currTestButton2) {
+            testButton1.style.background = "orange";
+            testButton2.style.background = "teal";
         }
 
-        fgenerate();
+        if (currTestButton2) {
+            n += 1;
+
+            if (n === limit) {
+                enable = false;
+                fplot();
+            } else {
+                trials.innerText = "Trial " + (n + 1) + " of " + limit;
+            }
+
+            fgenerate();
+        }
     }
 }
 
 function fgenerate() {
-    testButton.style.width = Math.floor(Math.random() * 161) + 40;
-    testButton.style.height = Math.floor(Math.random() * 161) + 40;
-    testButton.style.top = Math.floor(Math.random() * 351) + 150;
-    testButton.style.left = Math.floor(Math.random() * 1251) + 25;
+    width = Math.floor(Math.random() * 161) + 40;
+    pad = Math.floor(Math.random() * (container.offsetWidth / 2 - 250)) + 25;
+    testButton1.style.width = width;
+    testButton2.style.width = width;
+    testButton1.style.left = container.offsetWidth - pad - width;
+    testButton2.style.left = pad;
 }
 
 function fplot() {
+    trials.innerText = "";
+    explain.innerText = "";
+    startButton.style.display = "block";
+    testButton.style.display = "none";
+    testButton1.style.display = "none";
+    testButton2.style.display = "none";
+
     if (mn === mx || mn === Number.MAX_SAFE_INTEGER) {
         explain.innerText = "No valid input to represent";
-        testButton.style.top = 200;
+        startButton.style.top = 200;
     } else {
-        testButton.style.top = 600;
         b = (n * xy - x * y) / (n * xsrq - x * x);
         a = (y - b * x) / n;
         mn = Math.min(mn, -1);
@@ -176,7 +190,7 @@ function fplot() {
 
         var layout = {
             title: {
-                text: 'MT = a + b.ID \n a = ' + a + ' millisecs,  b = ' + b + ' millisecs/bit',
+                text: 'MT = a + b⋅ID \n a = ' + a.toPrecision(5) + ' millisecs,  b = ' + b.toPrecision(5) + ' millisecs/bit',
                 font: {
                     family: 'Courier New, monospace',
                     size: 24
@@ -205,6 +219,8 @@ function fplot() {
                 }
             }
         }
+
+        startButton.innerText = "Restart";
 
         plotter.style.display = "block";
         Plotly.newPlot('plotter', data, layout);

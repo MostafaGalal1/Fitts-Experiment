@@ -5,20 +5,26 @@
     <script src="plotly.js"></script>
 </head>
 
-<body onclick="fset()">
-    <h1 class="title">
-        Fitts' Experiment
-    </h1>
-    <h3 class="trials" id="trials">
-        Webpage tests Fitts's law describing the time to make aimed movements (MT) with an index of difficulty (ID) and determining the constants of the regression line.
-    </h3>
-    <h3 class="explain" id="explain">
-    </h3>
-    <div id='plotter'></div>
+<body>
+    <div class ='information'>
+        <h1 class='title'>
+            Fitts' Experiment
+        </h1>
+        <h3 class='trials' id='trials'>
+            Webpage tests Fitts's law describing the time to make aimed movements (MT) with an index of difficulty (ID) and determining the constants of the corresponding regression line depending on the input data.
+        </h3>
+        <h3 class='explain' id='explain'>
+        </h3>
+    </div>
 
-    <link rel="stylesheet" href="style.css">
-    <button type="button" id="B" class="B" onclick="foperation()">Start</button>
+    <div class='plotter' id='plotter'></div>
+    <div class='container' id='container'>
+        <button type="button" id="S" class="S" onclick="finitialize()">Start</button>
+        <button type="button" id="C" class="C" onclick="fset()"></button>
+        <button type="button" id="T1" class="T1" onclick="foperation1()"></button>
+        <button type="button" id="T2" class="T2" onclick="foperation2()"></button>
+        
+    </div>
     <script src="action.js"></script>
-</body>
-
-</html>
+    <link rel="stylesheet" href="style.css">
+</body></html>
